@@ -1,0 +1,3 @@
+cn.tdywork.oa.framework.datasource.config.OaDataSourceAutoConfiguration
+cn.tdywork.oa.framework.mybatis.config.OaMybatisAutoConfiguration
+cn.tdywork.oa.framework.translate.config.OaTranslateAutoConfiguration

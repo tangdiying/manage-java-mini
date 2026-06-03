@@ -1,0 +1,7 @@
+cn.tdywork.oa.framework.apilog.config.OaApiLogAutoConfiguration
+cn.tdywork.oa.framework.jackson.config.OaJacksonAutoConfiguration
+cn.tdywork.oa.framework.swagger.config.OaSwaggerAutoConfiguration
+cn.tdywork.oa.framework.web.config.OaWebAutoConfiguration
+cn.tdywork.oa.framework.xss.config.OaXssAutoConfiguration
+cn.tdywork.oa.framework.banner.config.OaBannerAutoConfiguration
+cn.tdywork.oa.framework.encrypt.config.OaApiEncryptAutoConfiguration

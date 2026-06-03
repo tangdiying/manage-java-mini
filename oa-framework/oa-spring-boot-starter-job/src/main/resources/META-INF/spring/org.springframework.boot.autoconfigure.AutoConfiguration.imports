@@ -1,0 +1,2 @@
+cn.tdywork.oa.framework.quartz.config.OaQuartzAutoConfiguration
+cn.tdywork.oa.framework.quartz.config.OaAsyncAutoConfiguration

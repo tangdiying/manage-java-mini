@@ -1,0 +1,3 @@
+cn.tdywork.oa.framework.mq.redis.config.OaRedisMQProducerAutoConfiguration
+cn.tdywork.oa.framework.mq.redis.config.OaRedisMQConsumerAutoConfiguration
+cn.tdywork.oa.framework.mq.rabbitmq.config.OaRabbitMQAutoConfiguration

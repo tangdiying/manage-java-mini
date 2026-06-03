@@ -1,0 +1,78 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Java Min CI with Maven
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:   # 👈 加上这一行，就可以手动点按钮运行
+
+# ==========================================
+# ✨ 核心新增：同一时间同一个分支只允许跑一个任务
+# ==========================================
+concurrency:
+    # github.workflow 代表当前工作流名称，github.ref_name 代表当前分支名（即 dev）
+    # 这样可以确保“同一个工作流的同一个分支”被锁定在同一个并发组内
+    group: ${{ github.workflow }}-${{ github.ref_name }}
+    # 当有新的提交触发此任务时，如果旧的任务还在排队或运行中，直接强行取消（顶替）旧任务
+    cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'maven'
+    
+    - name: Build with Maven
+      run: |
+        mvn clean package -T 1C -Dmaven.test.skip=true \
+          -Dmaven.test.skip=true \
+          -Dmaven.wagon.http.allowServerInsecure=true \
+          -Dmaven.wagon.http.ssl.insecure=true \
+          -Dmaven.wagon.http.ssl.allowall=true
+    
+    # 【步骤 A】将打包好的 jar 包上传到宝塔服务器
+    - name: Upload JAR to RSYNC
+      uses: burnett01/rsync-deployments@6.0.0
+      with:
+        switches: -avzr --delete --progress
+        path: oa-server/target/oa-server.jar
+        remote_path: /www/wwwroot/oa.tdywork.cn/backend/oa-server/
+        remote_host: ${{ secrets.SSH_HOST }}
+        remote_user: ${{ secrets.SSH_USER }}
+        remote_key: ${{ secrets.SSH_KEY }}
+        remote_port: ${{ secrets.SSH_PORT || 22 }}
+        # source: "oa-server/target/oa-server.jar"  # Maven 默认打包在 target 目录下
+        # target: "/www/wwwroot/www.tdywork.cn/backend/oa-server" # ⚠️ 改成你宝塔的文件夹路径
+        # strip_components: 2     # 剥离前两层目录(gateway-server/target)，直接把 jar 放入目标文件夹
+    
+    # 【步骤 B】远程执行命令，重启 Java 项目
+    - name: Restart Java Service
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT || 22 }}
+        script: |
+          # 1. 这里的项目名称，是你在宝塔“Java项目”列表里看到的名字（通常是你的域名或自定义的名称）
+          BT_GATEWAY_NAME="oa-server"
+          
+          echo "正在通过宝塔脚本重启 Java 项目: $PROJECT_NAME ..."
+          
+          # 2. 调用宝塔内置的 Java 项目管理器脚本进行重启
+          # 宝塔的通用控制脚本路径一般为 /www/server/panel/vhost/cert/ 
+          # 或者直接调用其内部的单独管理脚本，最稳妥的通用命令是：
+          /www/server/panel/script/bt_java_service.sh restart "$BT_GATEWAY_NAME"
+          
+          echo "宝塔 Java 服务重启指令已发送！"

@@ -1,0 +1,4 @@
+cn.tdywork.oa.framework.idempotent.config.OaIdempotentConfiguration
+cn.tdywork.oa.framework.lock4j.config.OaLock4jConfiguration
+cn.tdywork.oa.framework.ratelimiter.config.OaRateLimiterConfiguration
+cn.tdywork.oa.framework.signature.config.OaApiSignatureAutoConfiguration

@@ -1,0 +1,3 @@
+cn.tdywork.oa.framework.security.config.OaSecurityAutoConfiguration
+cn.tdywork.oa.framework.security.config.OaWebSecurityConfigurerAdapter
+cn.tdywork.oa.framework.operatelog.config.OaOperateLogConfiguration

@@ -1,0 +1,2 @@
+cn.tdywork.oa.framework.redis.config.OaRedisAutoConfiguration
+cn.tdywork.oa.framework.redis.config.OaCacheAutoConfiguration

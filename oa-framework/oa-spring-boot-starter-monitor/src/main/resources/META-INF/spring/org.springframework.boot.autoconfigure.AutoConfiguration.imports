@@ -1,0 +1,2 @@
+cn.tdywork.oa.framework.tracer.config.OaTracerAutoConfiguration
+cn.tdywork.oa.framework.tracer.config.OaMetricsAutoConfiguration
